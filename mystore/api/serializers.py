@@ -37,6 +37,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     product_reviews=ReviewSerializer(read_only=True,many=tuple)
+    avg_rating=serializers.CharField(read_only=True)
 
     class Meta:
         model=Products

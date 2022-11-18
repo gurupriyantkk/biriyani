@@ -12,6 +12,15 @@ class Products(models.Model):
     image=models.ImageField(null=True,upload_to="images")
     category=models.CharField(max_length=200)
 
+    
+    @property
+    def avg_rating(self):
+        ratings=self.reviews_set.all().values_list("rating",flat=True)
+        if ratings:
+            return sum(ratings)/len(ratings)
+        else:
+            return 0
+
     @property
     def product_reviews(self):
         return self.reviews_set.all()

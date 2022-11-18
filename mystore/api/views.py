@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet,ViewSet
 from rest_framework.response import Response
 from rest_framework import permissions,authentication
 from rest_framework.decorators import action
-
+from rest_framework import serializers
 
 from api.serializers import ProductSerializer,CartSerializer,ReviewSerializer
 from api.models import Products,Carts
@@ -26,6 +26,7 @@ class ProductsView(ModelViewSet):
             qs=qs.filter(category=request.query_params.get("category"))
         serializer=ProductSerializer(qs,many=True)
         return Response(data=serializer.data)
+
 
     @action(methods=["post"],detail=True)
     def addto_cart(self,request,*args,**kw):
@@ -59,6 +60,17 @@ class CartsView(ViewSet):
         qs=Carts.objects.filter(user=request.user)
         serializer=CartSerializer(qs,many=True)
         return Response(data=serializer.data)
+
+    def destroy(self,request,*args,**kw):
+        id=kw.get("pk")
+        object=Carts.objects.get(id=id)
+        if object.user==request.user:
+            object.delete()
+            return Response(data="deleted")
+        else:
+            raise serializers.ValidationError("you have no permission to perform this operation")
+
+
 
 
 
